@@ -16,8 +16,8 @@ public class BalloonColorFilter implements Filter {
         String path = request.getServletPath();
         String balloonColor = (String) request.getSession().getAttribute("balloonColor");
 
-            if (balloonColor==null && !"/home".equals(path)) {
-                response.sendRedirect("/home");
+            if (balloonColor==null && !"".equals(path)) {
+                response.sendRedirect("");
             } else {
                 filterChain.doFilter(servletRequest, servletResponse);
             }

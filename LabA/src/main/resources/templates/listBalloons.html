@@ -13,9 +13,12 @@
 <header>
     <h1>Welcome to our Balloon Shop App</h1>
 </header>
+<ul>
+    <li th:each="order : ${orders}"><b>OrderId:</b><th:block th:text="${order.orderId}"></th:block> <b>ClientName:</b><th:block th:text="${order.clientName}"></th:block> <b>ClientAddress:</b><th:block th:text="${order.clientAddress}"></th:block></li>
+</ul>
 <main>
     <h2>Choose balloon color:</h2>
-    <form th:method="POST" th:action="@{/home}">
+    <form th:method="POST" th:action="@{/}">
     <input type="radio" name="color" value="Red Balloon"  > Red Balloon<br/>
     <input type="radio" name="color" value="Green Balloon" > Green Balloon<br/>
     <input type="radio" name="color" value="Yellow Balloon" > Yellow Balloon<br/>
