@@ -1,0 +1,82 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<div th:if="${list}">
+<head >
+    <meta charset="utf-8">
+    <title>Add new Student to Course</title>
+    <style type = "text/css">
+        body {
+            width: 800px;
+            margin: auto;
+        }
+        table {
+            width:100%;
+        }
+        table, td, th {
+            border: 1px solid black;
+            padding:3px 2px;
+        }
+        section {
+            float: left;
+            margin: 0 1.5%;
+            width: 63%;
+        }
+        aside {
+            float: right;
+            margin: 0 1.5%;
+            width: 30%;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Student Enrollment - Select the Student </h1>
+</header>
+<section>
+    <h2>Select the student to enroll:</h2>
+    <form th:action="@{/AddStudent}" th:method="POST">
+    <a href='/CreateStudent' type='button'>Create New Student</a> <br/> <br/>
+    <li th:each="student: ${students}"><input type="radio" name="student" th:value="${student.username}"><th:block th:text="${student.name}"></th:block> <th:block th:text="${student.surname}"></th:block></li>
+    <br/>
+
+    <input value="submit" type="submit"/>
+    </form>
+</section>
+<aside>
+    <table>
+        <tr>
+            <th colspan="2">
+                Your Enrollment Status
+            </th>
+        </tr>
+        <tr>
+            <td><b>Course Id</b></td>
+            <td th:text="${session.courseName}"></td>
+        </tr>
+    </table>
+</aside>
+
+</body>
+</div>
+<div th:if="${create}">
+    <head >
+        <meta charset="utf-8">
+        <title>Create a New Student Page</title>
+    </head>
+    <body>
+    <header>
+        <h1>Student Enrollment - Create a New Student </h1>
+    </header>
+    <section>
+        <form th:method="POST" th:action="@{/CreateStudent}">
+            <label for='username'>Username:</label><input id='username' type='text' name='username'/><br/>
+            <label for='password'>Password:</label><input id='password' type='password' name='password'/><br/>
+            <label for='name'>Name:</label><input id='name' type='text' name='name'/><br/>
+            <label for='name'>Surname:</label><input id='surname' type='text' name='surname'/><br/>
+            <input type='submit' value='Submit'/>
+        </form>
+    </section>
+    </body>
+
+</div>
+</html>
+
