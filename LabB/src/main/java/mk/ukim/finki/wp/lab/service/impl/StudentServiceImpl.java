@@ -1,5 +1,6 @@
 package mk.ukim.finki.wp.lab.service.impl;
 
+import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.model.Student;
 import mk.ukim.finki.wp.lab.repository.CourseRepository;
 import mk.ukim.finki.wp.lab.repository.StudentRepository;
@@ -27,6 +28,16 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public List<Student> filterStudents(Long courseId) {
+        List<Student> courseStudents = courseRepository.findAllStudentsByCourse(courseId);
+        List<Student> allStudents = new ArrayList<>(studentRepository.findAllStudents());
+        for (Student student1 : courseStudents) {
+            allStudents.removeIf(r->r.getUsername().equals(student1.getUsername()));
+        }
+        return allStudents;
+    }
+
+    @Override
     public List<Student> searchByNameOrSurname(String text) {
 
         return studentRepository.findAllByNameOrSurname(text);
@@ -34,19 +45,26 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student save(String username, String password, String name, String surname) {
-        Student student = new Student(username,password,name,surname);
-        studentRepository.addStudent(student);
-        return student;
+        return studentRepository.addStudent(username, password, name, surname);
     }
 
+    @Override
+    public List<Course> findCoursesList(String username) {
+        return studentRepository.findCourses(username);
+    }
 
-//    @Override
-//    public List<Student> filterStudents(Long courseId) {
-//        List<Student> courseStudents = courseRepository.findAllStudentsByCourse(courseId);
-//        List<Student> allStudents = new ArrayList<>(studentRepository.findAllStudents());
-//        for (Student student1 : courseStudents) {
-//            allStudents.removeIf(r->r.getUsername().equals(student1.getUsername()));
-//        }
-//        return allStudents;
-//    }
+    @Override
+    public Student addCourse(String username, long id) {
+        return studentRepository.addCourse(studentRepository.findByUsername(username),courseRepository.findById(id));
+    }
+
+    @Override
+    public Student findBtUsername(String username) {
+        return studentRepository.findByUsername(username);
+    }
+
+    @Override
+    public boolean deleteByUsername(String username) {
+        return this.studentRepository.deleteByUsername(username);
+    }
 }

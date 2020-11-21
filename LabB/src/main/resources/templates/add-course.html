@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Add course</title>
+</head>
+<body>
+
+<div>
+    <div>
+        <div>
+            <form th:action="@{/courses/add}" th:method="POST">
+                <div>
+                    <label for="name">Course name</label>
+                    <input type="text"
+                           class="form-control"
+                           id="name"
+                           name="name"
+                           th:value="(${course} != null ? ${course.getName()} : '')"
+                           required
+                           placeholder="Enter course name">
+                </div>
+                <div>
+                    <label >Course description</label>
+                    <input type="text"
+                           class="form-control"
+                           id="description"
+                           name="description"
+                           th:value="(${course} != null ? ${course.getDescription()} : '')"
+                           placeholder="Description">
+                </div>
+                <div>
+                    <label>Teacher</label>
+                    <select name="teachers" >
+                        <option th:if="${teachers} != null"
+                                th:each="teacher : ${teachers}"
+                                th:value="${teacher.getId()}"
+                                th:text="${teacher.getName() +' '+teacher.getSurname()}">
+                        </option>
+                        <option th:if="${teachers} == null"
+                                th:each="teacher : ${teachers}"
+                                th:value="${teacher.getId()}"
+                                th:text="${teacher.getName() +' '+ teacher.getSurname()}">
+                        </option>
+                    </select>
+                </div>
+                <input type="submit" value="submit">
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+

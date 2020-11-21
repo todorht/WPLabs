@@ -1,7 +1,5 @@
 package mk.ukim.finki.wp.lab.web;
 
-import mk.ukim.finki.wp.lab.model.Student;
-import mk.ukim.finki.wp.lab.repository.StudentRepository;
 import mk.ukim.finki.wp.lab.service.CourseService;
 import mk.ukim.finki.wp.lab.service.StudentService;
 import org.thymeleaf.context.WebContext;
@@ -31,18 +29,22 @@ public class ListStudentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String student = req.getParameter("student");
-        String courseId = (String) req.getSession().getAttribute("courseName");
-        courseService.addStudentInCourse(student,Long.parseLong(courseId));
-        resp.sendRedirect("/StudentEnrollmentSummary");
+        String courseId = (String) req.getSession().getAttribute("courseId");
+        if(student==null || student.isEmpty()){
+            resp.sendRedirect("/AddStudent");
+        }else {
+            courseService.addStudentInCourse(student, Long.parseLong(courseId));
+            studentService.addCourse(student, Long.parseLong(courseId));
+            resp.sendRedirect("/StudentEnrollmentSummary");
+        }
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         WebContext context = new WebContext(req,resp,req.getServletContext());
         context.setVariable("list", true);
-        String courseId = (String)req.getSession().getAttribute("courseName");
-        context.setVariable("students", studentService.listAll());
-        //context.setVariable("students", studentService.filterStudents(Long.parseLong(courseId)));
+        String courseId = (String)req.getSession().getAttribute("courseId");
+        context.setVariable("students", studentService.filterStudents(Long.parseLong(courseId)));
         springTemplateEngine.process("listStudents.html",context,resp.getWriter());
     }
 }

@@ -39,13 +39,9 @@ public class CreateStudentServlet extends HttpServlet {
         context.setVariable("create", false);
         context.setVariable("list",true);
         String username = req.getParameter("username");
-        req.getSession().setAttribute("username", username);
         String password = req.getParameter("password");
-        req.getSession().setAttribute("password", password);
         String name = req.getParameter("name");
-        req.getSession().setAttribute("name", name);
         String surname = req.getParameter("surname");
-        req.getSession().setAttribute("surname", surname);
         studentService.save(username,password,name,surname);
         resp.sendRedirect("/AddStudent");
     }

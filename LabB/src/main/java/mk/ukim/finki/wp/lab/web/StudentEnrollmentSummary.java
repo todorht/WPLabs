@@ -1,6 +1,5 @@
 package mk.ukim.finki.wp.lab.web;
 
-import mk.ukim.finki.wp.lab.repository.CourseRepository;
 import mk.ukim.finki.wp.lab.service.CourseService;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -26,9 +25,10 @@ public class StudentEnrollmentSummary extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         WebContext context = new WebContext(req,resp,req.getServletContext());
-        String courseId = (String) req.getSession().getAttribute("courseName");
+        String courseId = (String) req.getSession().getAttribute("courseId");
         context.setVariable("students", courseService.listStudentsByCourse(Long.parseLong(courseId)));
         context.setVariable("course", courseService.findById(Long.parseLong(courseId)));
+        req.getSession().invalidate();
         springTemplateEngine.process("studentsInCourse.html",context,resp.getWriter());
     }
 }

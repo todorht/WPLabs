@@ -1,0 +1,17 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>WP lab - Students in Course</title>
+
+</head>
+<body>
+<section>
+    <h1>Courses</h1>
+    <ul>
+        <li th:each="course: ${courses}" ><th:block th:text="${course.name}" ></th:block></li>
+    </ul>
+    <a href="/courses">Back</a>
+</section>
+
+</body>
+</html>

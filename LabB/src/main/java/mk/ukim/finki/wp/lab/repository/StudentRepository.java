@@ -1,12 +1,12 @@
 package mk.ukim.finki.wp.lab.repository;
 
+import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.model.Student;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -30,13 +30,27 @@ public class StudentRepository {
         return students.stream().filter(r->r.getName().equals(text) || r.getSurname().equals(text)).collect(Collectors.toList());
     }
 
-
-
     public Student findByUsername(String username){
         return students.stream().filter(r->r.getUsername().equals(username)).findFirst().get();
     }
 
-    public void addStudent(Student s){
-        students.add(s);
+    public Student addStudent(String username, String password,String name, String surname){
+        Student student = new Student(username, password, name, surname);
+        students.add(student);
+        return student;
+
+    }
+
+    public Student addCourse(Student student, Course course){
+        student.getCourseList().add(course);
+        return student;
+    }
+
+    public List<Course> findCourses(String username){
+        return this.findByUsername(username).getCourseList();
+    }
+
+    public boolean deleteByUsername(String username){
+        return students.removeIf(s->s.getUsername().equals(username));
     }
 }
