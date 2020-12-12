@@ -24,7 +24,7 @@
 
 <div class="container mb-4">
     <div class="row">
-        <div  class="col-12" th:if="${courses.size() > 0}">
+        <div  class="col-12" >
             <div class="table-responsive">
                 <table style="overflow-x: auto; border: 1px solid black;">
                     <thead>
@@ -74,14 +74,5 @@
         </div>
     </div>
 </div>
-
-    </br>
-
-    <h2>Select student </h2>
-    <form th:method="POST" th:action="@{/StudentCourses}">
-        <li th:each="student: ${students}"><input type="radio" name="student" th:value="${student.username}"><th:block th:text="${student.name}"></th:block> <th:block th:text="${student.surname}"></th:block></li>
-        </br>
-        <input value="submit" type="submit"/>
-    </form>
 </body>
 </html>

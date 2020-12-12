@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/teacher")
@@ -24,7 +25,7 @@ public class TeacherControllerRest {
     }
 
     @GetMapping("/{id}")
-    public Teacher findByUsername(@PathVariable long id){
+    public Optional<Teacher> findByUsername(@PathVariable long id){
         return this.teacherService.findById(id);
     }
 
@@ -40,7 +41,8 @@ public class TeacherControllerRest {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Course> deleteById(@PathVariable long id){
-        if(this.teacherService.deleteById(id)) return ResponseEntity.ok().build();
+        this.teacherService.deleteById(id);
+        if(!this.teacherService.findById(id).isPresent()) return ResponseEntity.ok().build();
         return ResponseEntity.badRequest().build();
     }
 }

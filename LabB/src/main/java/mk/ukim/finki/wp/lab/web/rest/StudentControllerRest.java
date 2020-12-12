@@ -2,6 +2,7 @@ package mk.ukim.finki.wp.lab.web.rest;
 
 import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.model.Student;
+import mk.ukim.finki.wp.lab.service.CourseService;
 import mk.ukim.finki.wp.lab.service.StudentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,11 @@ import java.util.List;
 public class StudentControllerRest {
 
     private final StudentService studentService;
+    private final CourseService courseService;
 
-    public StudentControllerRest(StudentService studentService) {
+    public StudentControllerRest(StudentService studentService, CourseService courseService) {
         this.studentService = studentService;
+        this.courseService = courseService;
     }
 
     @GetMapping
@@ -39,8 +42,4 @@ public class StudentControllerRest {
         return this.studentService.save(username, password, name, surname);
     }
 
-    @PostMapping("/add-course")
-    public Student addStudent(@RequestParam String username, @RequestParam long courseId){
-        return this.studentService.addCourse(username,courseId);
-    }
 }

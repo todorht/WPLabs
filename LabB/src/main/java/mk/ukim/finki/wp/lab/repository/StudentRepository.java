@@ -41,14 +41,14 @@ public class StudentRepository {
 
     }
 
-    public Student addCourse(Student student, Course course){
-        student.getCourseList().add(course);
-        return student;
-    }
+//    public Student addCourse(Student student, Course course){
+//        student.getCourseList().add(course);
+//        return student;
+//    }
 
-    public List<Course> findCourses(String username){
-        return this.findByUsername(username).getCourseList();
-    }
+//    public List<Course> findCourses(String username){
+//        return this.findByUsername(username).getCourseList();
+//    }
 
     public boolean deleteByUsername(String username){
         return students.removeIf(s->s.getUsername().equals(username));

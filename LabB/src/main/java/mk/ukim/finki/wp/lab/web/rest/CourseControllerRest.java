@@ -2,6 +2,7 @@ package mk.ukim.finki.wp.lab.web.rest;
 
 import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.service.CourseService;
+import mk.ukim.finki.wp.lab.service.StudentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,10 +13,11 @@ import java.util.List;
 public class CourseControllerRest {
 
     private final CourseService courseService;
+    private final StudentService studentService;
 
-
-    public CourseControllerRest(CourseService courseService) {
+    public CourseControllerRest(CourseService courseService, StudentService studentService) {
         this.courseService = courseService;
+        this.studentService = studentService;
     }
 
     @GetMapping
@@ -30,7 +32,8 @@ public class CourseControllerRest {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Course> deleteById(@PathVariable long id){
-        if(this.courseService.deleteById(id)) return ResponseEntity.ok().build();
+        this.courseService.deleteById(id);
+        if(this.courseService.findById(id)==null) return ResponseEntity.ok().build();
         return ResponseEntity.badRequest().build();
     }
 
@@ -41,11 +44,14 @@ public class CourseControllerRest {
 
     @PostMapping("/add-student")
     public Course addStudent(@RequestParam long id, @RequestParam String username){
-       return courseService.addStudentInCourse(username,id);
+        courseService.findById(id).getStudents()
+                .add(this.studentService.findBtUsername(username));
+           return courseService.findById(id);
+
     }
 
     @PostMapping("/add-teacher")
     public Course addTeacher(@RequestParam long courseId, @RequestParam long teacherId){
-        return courseService.setTeacher(courseId,teacherId);
+        return courseService.setTeacherC(courseId,teacherId);
     }
 }

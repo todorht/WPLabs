@@ -16,8 +16,10 @@ public class CourseFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String path = request.getServletPath();
         String courseId = (String) request.getSession().getAttribute("courseId");
-        if(("/".equals(path) || "/AddStudent".equals(path) || "/CreateStudent".equals(path) || "/StudentEnrollmentSummary".equals(path)) && courseId==null ){
+        if(("/AddStudent".equals(path) || "/CreateStudent".equals(path) || "/StudentEnrollmentSummary".equals(path)) && courseId==null ){
             response.sendRedirect("/courses?error=PleaseSelectCourse");
+        }else if("/".equals(path)) {
+            response.sendRedirect("/courses");
         }else {
                 filterChain.doFilter(servletRequest,servletResponse);
             }

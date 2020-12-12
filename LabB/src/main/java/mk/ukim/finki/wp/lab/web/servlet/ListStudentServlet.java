@@ -1,4 +1,4 @@
-package mk.ukim.finki.wp.lab.web;
+package mk.ukim.finki.wp.lab.web.servlet;
 
 import mk.ukim.finki.wp.lab.service.CourseService;
 import mk.ukim.finki.wp.lab.service.StudentService;
@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.io.IOException;
 
 @WebServlet(name = "ListStudentServlet", urlPatterns = "/AddStudent")
@@ -27,14 +28,14 @@ public class ListStudentServlet extends HttpServlet {
     }
 
     @Override
+    @Transactional
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String student = req.getParameter("student");
         String courseId = (String) req.getSession().getAttribute("courseId");
         if(student==null || student.isEmpty()){
             resp.sendRedirect("/AddStudent");
         }else {
-            courseService.addStudentInCourse(student, Long.parseLong(courseId));
-            studentService.addCourse(student, Long.parseLong(courseId));
+            courseService.addStudentInCourse(student,courseId);
             resp.sendRedirect("/StudentEnrollmentSummary");
         }
     }

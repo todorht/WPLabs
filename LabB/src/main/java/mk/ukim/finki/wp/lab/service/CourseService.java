@@ -2,18 +2,19 @@ package mk.ukim.finki.wp.lab.service;
 
 import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.model.Student;
-import mk.ukim.finki.wp.lab.model.Teacher;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CourseService {
     List<Student> listStudentsByCourse(Long courseId);
-    Course addStudentInCourse(String username, Long courseId);
+    void addStudentInCourse(String username, String courseId);
     List<Course> listAll();
     Course findById(Long courseId);
-    boolean deleteById(Long id);
+    void deleteById(Long id);
     Course save(String name, String description, long teacher);
     Course save(String name, String description);
-    Course setTeacher(long teacherId, long courseId);
+    Course setTeacherC(long courseId, long teacherId);
+    Course editCourse(long courseId, String name, String description, long teacherId);
 }
 

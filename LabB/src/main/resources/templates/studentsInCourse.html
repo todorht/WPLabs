@@ -6,15 +6,13 @@
 </head>
 <body>
 <header>
-    <h1>Select student </h1>
+    <h1>Students in course</h1>
 </header>
-<section>
-    <div th:text="${course.name}" ></div>
-    <ul>
-        <li th:each="student: ${students}" ><th:block th:text="${student.name}" ></th:block> <th:block th:text="${student.surname}" ></th:block> (<th:block th:text="${student.username}" ></th:block>)</li>
+<!--    <div><th:block th:text="${course.name}" ></th:block></div>-->
+<ul>
+       <li th:each="student: ${students}" ><th:block th:text="${student.name}" ></th:block> <th:block th:text="${student.surname}" ></th:block> (<th:block th:text="${student.username}" ></th:block>)</li>
     </ul>
     <a href="/courses">Back</a>
-</section>
 
 </body>
 </html>

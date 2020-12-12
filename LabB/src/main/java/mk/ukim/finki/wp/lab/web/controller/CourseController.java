@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
@@ -35,7 +34,6 @@ public class CourseController {
             model.addAttribute("error",error);
         }
         request.getSession().invalidate();
-
         model.addAttribute("courses", this.courseService.listAll());
         model.addAttribute("students",this.studentService.listAll());
         return "listCourses";
@@ -50,12 +48,10 @@ public class CourseController {
 
     @GetMapping("/edit/{id}")
     public String getEditCoursePage(@PathVariable Long id, Model model, HttpServletRequest request){
-
         if(courseService.findById(id)!=null) {
             Course course = courseService.findById(id);
-            List<Teacher> teachers = teacherService.findAll();
             model.addAttribute("course", course);
-            model.addAttribute("teachers", teachers);
+            model.addAttribute("teachers", teacherService.findAll());
             request.getSession().setAttribute("deleteId", course.getCourseId());
             return "add-course";
         }
@@ -72,31 +68,30 @@ public class CourseController {
     @PostMapping("/add")
     public String saveCourse(@RequestParam String name,
                              @RequestParam String description,
-                             @RequestParam Long teachers,HttpServletRequest request){
+                             @RequestParam(required = false) Long teachers,HttpServletRequest request){
         Long id = (Long) request.getSession().getAttribute("deleteId");
         if(id!=null){
-           Course course = courseService.findById(id);
-            if(courseService.listAll().stream()
-                    .noneMatch(c->c.getName().toLowerCase().equals(name.toLowerCase()) && !c.getCourseId().equals(id))) {
-                course.setName(name);
-            }else {
+            if(courseService.editCourse(id, name, description, teachers)!=null) {
+                request.getSession().setAttribute("deleteId", null);
+                return "redirect:/courses";
+            }else{
                 request.getSession().setAttribute("deleteId", null);
                 return "redirect:/courses?error=Course already exists (EDIT)";
             }
-           course.setDescription(description);
-           course.setTeacher(teacherService.findById(teachers));
-           request.getSession().setAttribute("deleteId", null);
-           return "redirect:/courses";
         }
         if(courseService.listAll().stream().noneMatch(c->c.getName().toLowerCase().equals(name.toLowerCase()))) {
-            courseService.listAll().add(courseService.save(name, description, teachers));
+            List<Course> courses = courseService.listAll();
+            if(teachers!=null) courses.add(courseService.save(name, description, teachers));
+            else courses.add(courseService.save(name,description));
             return "redirect:/courses";
         }else return "redirect:/courses?error=Course already exists (ADD)";
     }
 
     @DeleteMapping("/delete/{id}")
     public String deleteCourse(@PathVariable Long id){
-        this.courseService.deleteById(id);
-        return "redirect:/courses";
+        courseService.deleteById(id);
+        if(courseService.findById(id)!=null)
+         return "redirect:/courses";
+        else return "redirect:/courses?error=CourseNotFound";
     }
 }
