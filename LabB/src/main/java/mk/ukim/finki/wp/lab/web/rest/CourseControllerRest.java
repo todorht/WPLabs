@@ -1,6 +1,7 @@
 package mk.ukim.finki.wp.lab.web.rest;
 
 import mk.ukim.finki.wp.lab.model.Course;
+import mk.ukim.finki.wp.lab.model.Type;
 import mk.ukim.finki.wp.lab.service.CourseService;
 import mk.ukim.finki.wp.lab.service.StudentService;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class CourseControllerRest {
 
     @GetMapping("/{id}")
     public Course findById(@PathVariable long id){
-        return courseService.listAll().stream().filter(c->c.getCourseId().equals(id)).findFirst().orElse(null);
+        return courseService.findById(id);
     }
 
     @DeleteMapping("/{id}")
@@ -38,14 +39,13 @@ public class CourseControllerRest {
     }
 
     @PostMapping("/add")
-    public Course addCourse(@RequestParam String name, @RequestParam String description){
-        return this.courseService.save(name, description);
+    public Course addCourse(@RequestParam String name, @RequestParam String description, @RequestParam Type type){
+        return this.courseService.save(name, description, type);
     }
 
     @PostMapping("/add-student")
     public Course addStudent(@RequestParam long id, @RequestParam String username){
-        courseService.findById(id).getStudents()
-                .add(this.studentService.findBtUsername(username));
+        courseService.addStudentInCourse(username,id);
            return courseService.findById(id);
 
     }

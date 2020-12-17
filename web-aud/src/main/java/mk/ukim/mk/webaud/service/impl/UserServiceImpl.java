@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -32,11 +33,10 @@ public class UserServiceImpl implements UserService {
             throw new InvalidArgumentsExceptions();
         if(!(password.equals(repeatPassword)))
             throw new PasswordDoNotMatchException();
-        if(this.userRepository.findByUsername(username).isPresent()
-                || !this.userRepository.findByUsername(username).isEmpty())
+        if(this.userRepository.findByUsername(username).isPresent())
             throw new UserNameExistsException(username);
 
-        User user = new User(username, password, name, surname, role);
+        User user = new User(username, passwordEncoder.encode(password), name, surname, role);
         return userRepository.save(user);
     }
 

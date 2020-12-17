@@ -10,6 +10,6 @@ public interface TeacherService {
      List<Teacher> findAll();
      Optional<Teacher> findById(Long id);
      Teacher save(String name, String surname);
-     Teacher addCourse(long teacherId, long courseId);
+     Optional<Teacher> addCourse(long teacherId, long courseId);
      void deleteById(long teacherId);
 }

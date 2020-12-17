@@ -8,10 +8,22 @@
 <header>
     <h1>Students in course</h1>
 </header>
-<!--    <div><th:block th:text="${course.name}" ></th:block></div>-->
-<ul>
-       <li th:each="student: ${students}" ><th:block th:text="${student.name}" ></th:block> <th:block th:text="${student.surname}" ></th:block> (<th:block th:text="${student.username}" ></th:block>)</li>
-    </ul>
+<h2 th:text="${course.name}"></h2>
+<table style="overflow-x: auto; border: 1px solid black;">
+    <thead>
+    <tr>
+        <td><h3>Student</h3></td>
+        <td><h3>Grade</h3></td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="student: ${students}" >
+        <td th:text="${student.name} +' '+ ${student.surname}"></td>
+        <td th:text="${student.grade}">
+        </td>
+    </tr>
+    </tbody>
+</table>
     <a href="/courses">Back</a>
 
 </body>

@@ -1,7 +1,5 @@
 package mk.ukim.finki.wp.lab.web.servlet;
 
-import mk.ukim.finki.wp.lab.model.Student;
-import mk.ukim.finki.wp.lab.repository.StudentRepository;
 import mk.ukim.finki.wp.lab.service.StudentService;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -38,11 +36,16 @@ public class CreateStudentServlet extends HttpServlet {
         WebContext context = new WebContext(req,resp,req.getServletContext());
         context.setVariable("create", false);
         context.setVariable("list",true);
+
         String username = req.getParameter("username");
         String password = req.getParameter("password");
         String name = req.getParameter("name");
         String surname = req.getParameter("surname");
-        studentService.save(username,password,name,surname);
-        resp.sendRedirect("/AddStudent");
+        if(studentService.listAll().stream().anyMatch(student -> student.getUsername().toLowerCase().equals(username)))
+            resp.sendRedirect("/AddStudent?error=UsernameAlreadyExists");
+        else {
+            studentService.save(username, password, name, surname);
+            resp.sendRedirect("/AddStudent");
+        }
     }
 }

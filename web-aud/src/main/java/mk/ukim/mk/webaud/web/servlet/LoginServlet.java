@@ -3,6 +3,7 @@ package mk.ukim.mk.webaud.web.servlet;
 import mk.ukim.mk.webaud.model.User;
 import mk.ukim.mk.webaud.model.exceptions.InvalidUserCredentialsException;
 import mk.ukim.mk.webaud.service.AuthService;
+import org.springframework.ui.Model;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 

@@ -38,9 +38,6 @@
                     <tbody>
                     <tr th:each="course : ${courses}">
                         <td><input form="jas" type="radio" name="course" th:text="${course.getName()}" th:value="${course.getCourseId()}"> </td>
-                        <td>
-                            <th:block th:text="${course.getTeacher() != null} ? ${course.getTeacher().getName() + ' ' + course.getTeacher().getSurname()} : 'No teacher'"></th:block>
-                        </td>
                         <td class="text-right">
                             <form th:action="@{'/courses/delete/{id}' (id=${course.getCourseId()})}" th:method="DELETE">
                                 <button type="submit">Delete</button>

@@ -33,7 +33,7 @@ class CustomUsernamePasswordAuthenticationProvider implements AuthenticationProv
 
         UserDetails userDetails = this.userService.loadUserByUsername(username);
 
-        if(!passwordEncoder.matches(passwordEncoder.encode(password),userDetails.getPassword())){
+        if(passwordEncoder.matches(passwordEncoder.encode(userDetails.getPassword()),password)){
             throw new BadCredentialsException("Password is incorrect");
         }
         return new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());

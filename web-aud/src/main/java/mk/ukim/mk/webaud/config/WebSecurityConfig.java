@@ -27,7 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/","/home","/assets/**","/register").permitAll()
+                .antMatchers("/","/home","/assets/**","/register","/api/**").permitAll()
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
@@ -50,7 +50,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
           //In memory H2
+
 //        auth.inMemoryAuthentication()
 //                .withUser("todorht")
 //                .password(passwordEncoder.encode("tode"))

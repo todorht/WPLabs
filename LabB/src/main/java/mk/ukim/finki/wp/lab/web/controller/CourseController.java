@@ -3,6 +3,8 @@ package mk.ukim.finki.wp.lab.web.controller;
 
 import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.model.Teacher;
+import mk.ukim.finki.wp.lab.model.Type;
+import mk.ukim.finki.wp.lab.model.exception.CourseAlreadyExistsException;
 import mk.ukim.finki.wp.lab.service.CourseService;
 import mk.ukim.finki.wp.lab.service.StudentService;
 import mk.ukim.finki.wp.lab.service.TeacherService;
@@ -68,10 +70,12 @@ public class CourseController {
     @PostMapping("/add")
     public String saveCourse(@RequestParam String name,
                              @RequestParam String description,
-                             @RequestParam(required = false) Long teachers,HttpServletRequest request){
+                             @RequestParam(required = false) Long teachers,
+                             @RequestParam Type type,
+                             HttpServletRequest request){
         Long id = (Long) request.getSession().getAttribute("deleteId");
         if(id!=null){
-            if(courseService.editCourse(id, name, description, teachers)!=null) {
+            if(courseService.editCourse(id, name, description, teachers, type)!=null) {
                 request.getSession().setAttribute("deleteId", null);
                 return "redirect:/courses";
             }else{
@@ -79,12 +83,14 @@ public class CourseController {
                 return "redirect:/courses?error=Course already exists (EDIT)";
             }
         }
-        if(courseService.listAll().stream().noneMatch(c->c.getName().toLowerCase().equals(name.toLowerCase()))) {
+        try {
             List<Course> courses = courseService.listAll();
-            if(teachers!=null) courses.add(courseService.save(name, description, teachers));
-            else courses.add(courseService.save(name,description));
+            if (teachers != null) courses.add(courseService.save(name, description, teachers, type));
+            else courses.add(courseService.save(name, description, type));
             return "redirect:/courses";
-        }else return "redirect:/courses?error=Course already exists (ADD)";
+        }catch (CourseAlreadyExistsException e) {
+            return "redirect:/courses?error=Course already exists (ADD)";
+        }
     }
 
     @DeleteMapping("/delete/{id}")

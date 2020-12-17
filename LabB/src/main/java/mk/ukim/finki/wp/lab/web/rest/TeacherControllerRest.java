@@ -2,6 +2,7 @@ package mk.ukim.finki.wp.lab.web.rest;
 
 import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.model.Teacher;
+import mk.ukim.finki.wp.lab.model.exception.TeacherNotFoundedException;
 import mk.ukim.finki.wp.lab.service.TeacherService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,14 +36,17 @@ public class TeacherControllerRest {
     }
 
     @PostMapping("/add-course")
-    public Teacher addStudent(@RequestParam long id, @RequestParam long courseId){
+    public Optional<Teacher> addStudent(@RequestParam long id, @RequestParam long courseId){
         return this.teacherService.addCourse(id,courseId);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Course> deleteById(@PathVariable long id){
-        this.teacherService.deleteById(id);
-        if(!this.teacherService.findById(id).isPresent()) return ResponseEntity.ok().build();
-        return ResponseEntity.badRequest().build();
+        try {
+            this.teacherService.deleteById(id);
+            return ResponseEntity.ok().build();
+        }catch (TeacherNotFoundedException e){
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

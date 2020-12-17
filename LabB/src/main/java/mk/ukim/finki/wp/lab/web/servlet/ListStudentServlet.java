@@ -35,7 +35,7 @@ public class ListStudentServlet extends HttpServlet {
         if(student==null || student.isEmpty()){
             resp.sendRedirect("/AddStudent");
         }else {
-            courseService.addStudentInCourse(student,courseId);
+            courseService.addStudentInCourse(student,Long.parseLong(courseId));
             resp.sendRedirect("/StudentEnrollmentSummary");
         }
     }
