@@ -11,6 +11,9 @@
 </head>
 <body>
 <header>
+    <div>
+        <a href="/login">Login</a>
+    </div>
     <h1>Courses List</h1>
 </header>
 <div th:if="hasError">
@@ -30,32 +33,37 @@
                     <thead>
                     <tr>
                         <td><h3>Course</h3></td>
-                        <td><h3>Teacher</h3></td>
                         <td></td>
                         <td></td>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="course : ${courses}">
+                    <tr class="courses" th:each="course : ${courses}">
                         <td><input form="jas" type="radio" name="course" th:text="${course.getName()}" th:value="${course.getCourseId()}"> </td>
                         <td class="text-right">
+                            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
                             <form th:action="@{'/courses/delete/{id}' (id=${course.getCourseId()})}" th:method="DELETE">
-                                <button type="submit">Delete</button>
+                                <button class="delete-course" type="submit">Delete</button>
                             </form>
+                            </th:block>
                         </td>
                         <td class="text-right">
+                            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
                             <form th:action="@{'/courses/edit/{id}' (id=${course.getCourseId()})}" th:method="GET">
-                                <button type="submit">Edit</button>
+                                <button class="edit-course" type="submit">Edit</button>
                             </form>
+                            </th:block>
                         </td>
                     </tr>
                     <tr>
                     </tr>
                     <tr>
                         <td>
+                            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
                         <form th:method="GET" th:action="@{'/courses/add-form'}">
-                            <input value="Add course" type="submit"/>
+                            <input class="add-course" value="Add course" type="submit"/>
                         </form>
+                            </th:block>
                         </td>
                     </tr>
                     <tr>

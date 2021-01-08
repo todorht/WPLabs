@@ -9,6 +9,7 @@ import mk.ukim.finki.wp.lab.model.exception.CourseNotFoundException;
 import mk.ukim.finki.wp.lab.model.exception.StudentNotFoundException;
 import mk.ukim.finki.wp.lab.model.exception.TeacherNotFoundedException;
 import mk.ukim.finki.wp.lab.repository.jpa.CoursesRepositoryJpa;
+import mk.ukim.finki.wp.lab.repository.jpa.GradeRepositoryJpa;
 import mk.ukim.finki.wp.lab.repository.jpa.StudentRepositoryJpa;
 import mk.ukim.finki.wp.lab.repository.jpa.TeacherRepositoryJpa;
 import mk.ukim.finki.wp.lab.service.CourseService;
@@ -23,18 +24,22 @@ public class CourseServiceImpl implements CourseService {
     private final StudentRepositoryJpa studentRepositoryJpa;
     private final CoursesRepositoryJpa courseRepositoryJpa;
     private final TeacherRepositoryJpa teacherRepositoryJpa;
+    private final GradeRepositoryJpa gradeRepository;
 
     public CourseServiceImpl(StudentRepositoryJpa studentRepository,
                              CoursesRepositoryJpa courseRepositoryJpa,
-                             TeacherRepositoryJpa teacherRepository) {
+                             TeacherRepositoryJpa teacherRepository,
+                             GradeRepositoryJpa gradeRepository) {
         this.studentRepositoryJpa = studentRepository;
         this.courseRepositoryJpa = courseRepositoryJpa;
         this.teacherRepositoryJpa = teacherRepository;
+        this.gradeRepository = gradeRepository;
     }
 
     @Override
     public List<Student> listStudentsByCourse(Long courseId){
-        if(this.courseRepositoryJpa.findById(courseId).isPresent()) return courseRepositoryJpa.findById(courseId).get().getStudents();
+        if(this.courseRepositoryJpa.findById(courseId).isPresent())
+            return courseRepositoryJpa.findById(courseId).get().getStudents();
         else throw new CourseNotFoundException(courseId);
     }
 
@@ -43,10 +48,10 @@ public class CourseServiceImpl implements CourseService {
     public void addStudentInCourse(String username, Long course) {
         if(this.courseRepositoryJpa.findById(course).isPresent()){
             if(studentRepositoryJpa.findById(username).isPresent()) {
-                studentRepositoryJpa.findById(username).get().getCourseList().add(courseRepositoryJpa.findById(course).get());
-                courseRepositoryJpa.findById(course).get().getStudents()
-                        .add(studentRepositoryJpa.findById(username).orElseThrow(() -> new StudentNotFoundException(username)));
-                this.courseRepositoryJpa.save(courseRepositoryJpa.findById(course).get());
+                courseRepositoryJpa.getOne(course).getStudents()
+                        .add(studentRepositoryJpa.findById(username)
+                                .orElseThrow(() -> new StudentNotFoundException(username)));
+                this.courseRepositoryJpa.save(courseRepositoryJpa.getOne(course));
             }
         } else throw new CourseNotFoundException(course);
     }
@@ -58,7 +63,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course findById(Long courseId) {
-        return courseRepositoryJpa.findById(courseId).orElseThrow(()-> new CourseNotFoundException(courseId));
+        return courseRepositoryJpa.findById(courseId)
+                .orElseThrow(()-> new CourseNotFoundException(courseId));
     }
 
     @Override
@@ -73,34 +79,51 @@ public class CourseServiceImpl implements CourseService {
             Teacher teacher1 = this.teacherRepositoryJpa.findById(teacher)
                     .orElseThrow(() -> new TeacherNotFoundedException(teacher));
             Course course = new Course(name,description, teacher1, type);
-            teacher1.getCourses().add(course);
             return this.courseRepositoryJpa.save(course);
         } else throw new CourseAlreadyExistsException(name);
     }
 
     @Override
     public Course save(String name, String description, Type type) {
-        if(this.courseRepositoryJpa.findAll().stream().noneMatch(course -> course.getName().equalsIgnoreCase(name))) {
+        if(this.courseRepositoryJpa.findAll().stream()
+                .noneMatch(course -> course.getName().equalsIgnoreCase(name))) {
             return this.courseRepositoryJpa.save(new Course(name, description, type));
         }else throw new CourseAlreadyExistsException(name);
     }
 
     @Override
     public Course setTeacherC(long courseId, long teacherId) {
-        if(this.courseRepositoryJpa.findById(courseId).isPresent())
-            this.courseRepositoryJpa.findById(courseId).get().setTeacher(teacherRepositoryJpa.findById(teacherId).get());
-        return this.courseRepositoryJpa.findById(courseId).get();
+        if(this.teacherRepositoryJpa.findById(teacherId).isEmpty())
+            throw new TeacherNotFoundedException(teacherId);
+        if(this.courseRepositoryJpa.findById(courseId).isPresent()) {
+            this.courseRepositoryJpa.findById(courseId).get()
+                    .setTeacher(teacherRepositoryJpa.getOne(teacherId));
+            return this.courseRepositoryJpa.save(this.courseRepositoryJpa.findById(courseId).get());
+        } else throw new CourseNotFoundException(courseId);
     }
 
     @Override
     public Course editCourse(long courseId, String name, String description, long teacherId, Type type) {
+
         if(courseRepositoryJpa.findAll().stream()
-               .noneMatch(c->c.getName().toLowerCase()
-                       .equals(name.toLowerCase()) && !c.getCourseId()
-                       .equals(courseId))) {
-            this.courseRepositoryJpa.deleteById(courseId);
-        }
-        return courseRepositoryJpa.save(new Course(name,description,teacherRepositoryJpa.findById(teacherId).get(), type));
+               .noneMatch(c->c.getName().equalsIgnoreCase(name)
+                       && !c.getCourseId().equals(courseId))) {
+            Course course = courseRepositoryJpa.findById(courseId)
+                    .orElseThrow(()-> new CourseNotFoundException(courseId));
+            course.setName(name);
+            course.setDescription(description);
+            if(this.teacherRepositoryJpa.findById(teacherId).isPresent()){
+                course.setTeacher(teacherRepositoryJpa.getOne(teacherId));
+            }
+            course.setType(type);
+            return this.courseRepositoryJpa.save(course);
+        } else throw new CourseAlreadyExistsException(name);
+    }
+
+    @Override
+    public void deleteStudent(long courseId, String username) {
+         this.courseRepositoryJpa.findById(courseId).get().getStudents()
+                 .removeIf(student -> student.getUsername().equals(username));
     }
 
 }

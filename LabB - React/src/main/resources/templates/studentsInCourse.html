@@ -1,0 +1,30 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>WP lab - Students in Course</title>
+
+</head>
+<body>
+<header>
+    <h1>Students in course</h1>
+</header>
+<h2 th:text="${course.name}"></h2>
+<table style="overflow-x: auto; border: 1px solid black;">
+    <thead>
+    <tr>
+        <td><h3>Student</h3></td>
+        <td><h3>Grade</h3></td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="student: ${students}" >
+        <td th:text="${student.name} +' '+ ${student.surname}"></td>
+        <td th:text="${student.grade}">
+        </td>
+    </tr>
+    </tbody>
+</table>
+    <a href="/courses">Back</a>
+
+</body>
+</html>

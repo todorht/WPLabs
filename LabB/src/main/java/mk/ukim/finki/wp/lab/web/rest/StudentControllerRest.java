@@ -2,6 +2,7 @@ package mk.ukim.finki.wp.lab.web.rest;
 
 import mk.ukim.finki.wp.lab.model.Course;
 import mk.ukim.finki.wp.lab.model.Student;
+import mk.ukim.finki.wp.lab.model.exception.StudentNotFoundException;
 import mk.ukim.finki.wp.lab.service.CourseService;
 import mk.ukim.finki.wp.lab.service.StudentService;
 import org.springframework.http.ResponseEntity;
@@ -32,15 +33,27 @@ public class StudentControllerRest {
         return this.studentService.findBtUsername(username);
     }
 
-    @DeleteMapping("/{username}")
-    public ResponseEntity<Course> deleteById(@PathVariable String username){
-        if(this.studentService.deleteByUsername(username)) return ResponseEntity.ok().build();
-        return ResponseEntity.badRequest().build();
+    @GetMapping("/{username}/courses")
+    public List<Course> getStudentCourses(@PathVariable String username){
+        return this.studentService.findCoursesList(username);
+    }
+
+    @DeleteMapping("/delete/{username}")
+    public ResponseEntity<Student> deleteById(@PathVariable String username){
+        try {
+
+            this.studentService.deleteByUsername(username);
+            return ResponseEntity.ok().build();
+        }catch (StudentNotFoundException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping("/add")
     public Student addStudent(@RequestParam String username, @RequestParam String password,@RequestParam String name,@RequestParam String surname){
         return this.studentService.save(username, password, name, surname);
     }
+
+
 
 }

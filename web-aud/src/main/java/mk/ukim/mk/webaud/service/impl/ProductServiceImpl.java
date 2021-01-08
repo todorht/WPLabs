@@ -5,6 +5,7 @@ import mk.ukim.mk.webaud.model.Manufacturer;
 import mk.ukim.mk.webaud.model.Product;
 import mk.ukim.mk.webaud.model.exceptions.CategoryNotFoundException;
 import mk.ukim.mk.webaud.model.exceptions.ManufacturerNotFoundException;
+import mk.ukim.mk.webaud.model.exceptions.ProductNotFoundException;
 import mk.ukim.mk.webaud.repository.jpa.CategoryRepository;
 import mk.ukim.mk.webaud.repository.jpa.ManufacturerRepository;
 import mk.ukim.mk.webaud.repository.jpa.ProductRepository;
@@ -52,6 +53,23 @@ public class ProductServiceImpl implements ProductService {
 
         this.productRepository.deleteByName(name);
         return Optional.of(this.productRepository.save(new Product(name,price,quantity,category,manufacturer)));
+    }
+
+    @Override
+    public Optional<Product> edit(Long id, String name, Double price, Integer quantity, Long categoryId, Long manufacturerId) {
+
+        Product product = this.productRepository.findById(id).orElseThrow(()->new ProductNotFoundException(id));
+        Category category = this.categoryRepository.findById(categoryId)
+                .orElseThrow(()-> new CategoryNotFoundException(categoryId));
+        Manufacturer manufacturer = this.manufacturerRepository.findById(manufacturerId)
+                .orElseThrow(()-> new ManufacturerNotFoundException(manufacturerId));
+        product.setName(name);
+        product.setPrice(price);
+        product.setQuantity(quantity);
+
+
+
+        return Optional.of(this.productRepository.save(product));
     }
 
     @Override

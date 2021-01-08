@@ -31,11 +31,18 @@
 <header>
     <h1>Student Enrollment - Select the Student </h1>
 </header>
+<!--<div th:if="hasError">-->
+<!--    <h3 style="color: red" th:text="${error}"></h3>-->
+<!--</div>-->
 <section>
     <h2>Select the student to enroll:</h2>
-    <form th:action="@{/AddStudent}" th:method="POST">
-    <a href='/CreateStudent' type='button'>Create New Student</a> <br/> <br/>
-    <li th:each="student: ${students}"><input type="radio" name="student" th:value="${student.username}"><th:block th:text="${student.name}"></th:block> <th:block th:text="${student.surname}"></th:block></li>
+    <form th:action="@{/courses/add-student}" th:method="POST">
+    <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+    <a href='/student-create' type='button'>Create New Student</a>
+    </th:block>
+        <br>
+        <br>
+    <li th:each="student: ${students}"><input type="radio" name="student" th:value="${student.username}"><th:block th:text="${student.name}"></th:block> <th:block th:text="${student.surname}"></th:block> (<th:block th:text="${student.username}"></th:block>)</li>
     <br/>
 
     <input value="submit" type="submit"/>
@@ -67,7 +74,7 @@
         <h1>Student Enrollment - Create a New Student </h1>
     </header>
     <section>
-        <form th:method="POST" th:action="@{/CreateStudent}">
+        <form th:method="POST" th:action="@{/student-create}">
             <label for='username'>Username:</label><input id='username' type='text' name='username'/><br/>
             <label for='password'>Password:</label><input id='password' type='password' name='password'/><br/>
             <label for='name'>Name:</label><input id='name' type='text' name='name'/><br/>
